@@ -1,0 +1,23 @@
+{
+  "name": "music-composer-mcp",
+  "version": "1.0.0",
+  "description": "MCP server that lets an AI compose music (MIDI) and render it to audio via a SoundFont.",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "music-composer-mcp": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "zod": "^4.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.2",
+    "typescript": "^7.0.2"
+  }
+}
