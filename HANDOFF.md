@@ -122,11 +122,18 @@ Claude APIやその他のMCPクライアントから使えるようにしたい�
 
 ## 5. 次のアクション（TODO）
 
-- [ ] 2つのzipをGitHubにpush、Claude Codeで`/init`
-- [ ] game-sfx-mcp: 出力をファイルパスではなくbase64直接返却に変更（Workers対応の下準備）
-- [ ] game-sfx-mcp: Cloudflare Workers（Agents SDK `McpAgent`）向けのエントリポイントを追加し、
-      `wrangler deploy`で公開
-- [ ] music-composer-mcp: fluidsynth依存の扱い（WASM化 or Containers化 or ローカル運用継続）を検討
+- [x] 2つのzipをGitHubにpush、Claude Codeで`/init`（リポジトリ化済み。`/init`は未実施）
+- [x] 両プロジェクトの出力をファイルパスに加えてbase64直接返却するよう変更（Workers対応の下準備、`src/server.ts`の
+      `renderAndSave`/`tryWriteFile`）。ファイル書き込みはベストエフォート化し、共有ファイルシステムが
+      ない環境でも動くようにした
+- [x] 両プロジェクトにMCP Streamable HTTPトランスポートのエントリポイント（`src/http.ts`、
+      `npm run start:http`）を追加。ただし**Cloudflare Workers向けではなく、Node.js（自前ホスト/VPS/コンテナ）
+      向け**の実装。セッション管理・任意のBearerトークン認証（`API_KEY`）・CORS対応込み。curlでの
+      initialize→tools/call疎通確認済み
+- [ ] game-sfx-mcp: 上記HTTPサーバーをCloudflare Workers（Agents SDK `McpAgent`）向けに移植し、
+      `wrangler deploy`で0円運用できるようにする
+- [ ] music-composer-mcp: fluidsynth依存の扱い（WASM化 or Containers化 or 自前ホストでの運用継続）を検討
 - [ ] 両プロジェクトに動作確認用のテストスクリプト（本チャットで使ったMCPクライアント経由の検証手法）を
       正式に追加する
+- [ ] HTTP API側の認証をBearerトークンより発展させる（発行・失効の仕組み、レートリミット等）
 - [ ] （余力があれば）Anthropic公式のMCPディレクトリや`awesome-mcp-servers`系リストへの掲載を検討

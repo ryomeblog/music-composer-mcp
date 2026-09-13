@@ -27,7 +27,7 @@ MIDIデータの組み立てはこのサーバーが直接（外部ライブラ�
 ### 1. 依存関係のインストール
 
 ```bash
-cd music-composer-mcp
+cd music-mcp
 npm install
 npm run build
 ```
@@ -50,7 +50,7 @@ Node.js 18以上が必要です。
 プロジェクトのあるディレクトリで：
 
 ```bash
-claude mcp add music-composer -- node /絶対パス/music-composer-mcp/dist/index.js
+claude mcp add music-composer -- node /絶対パス/music-mcp/dist/index.js
 ```
 
 接続確認：
@@ -60,6 +60,23 @@ claude mcp list
 ```
 
 `music-composer` が `✔ Connected` になっていればOKです。
+
+## HTTPで公開する（リモートAPIとして使う）
+
+Claude Codeなどからstdioで直接使う以外に、MCPのStreamable HTTPトランスポートでHTTP APIとして起動することもできます。エンドポイントは1つ（`/mcp`）で、リモートのMCPクライアントから接続できます。
+
+```bash
+npm run build
+PORT=8788 API_KEY=好きな秘密文字列 npm run start:http
+```
+
+- `PORT`: 待受ポート（省略時 `8788`）
+- `API_KEY`: 設定すると全リクエストに `Authorization: Bearer <API_KEY>` が必須になります。**外部に公開する場合は必ず設定してください**（未設定だと誰でも呼び出せます）
+- 接続先: `http://<ホスト>:<PORT>/mcp`（MCPクライアント側でStreamable HTTPのURLとしてこれを指定）
+
+`render_audio`はサーバーを動かしているホスト側にfluidsynthとSoundFontが必要です（呼び出し側のマシンではありません）。`export_midi`・`render_audio`はファイルパスに加えて、生成したMIDI/WAVのバイト列をbase64（MCPの`audio`コンテンツ）でもレスポンスに含めるので、共有ファイルシステムがない環境（コンテナ・リモートホスト等）からでもそのまま音声データを受け取れます。
+
+現在はプロジェクト状態（`state.ts`）をプロセス全体で1つだけ保持する設計です。ローカルのstdio利用と同じ挙動で、HTTP経由でも**全セッションが同じ「現在のプロジェクト」を共有**します。個人利用や単一クライアントでの利用を想定しており、複数ユーザーが同時に別々の曲を編集するような用途には向きません。
 
 ## 使い方の例
 
