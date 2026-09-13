@@ -29,12 +29,12 @@ export async function renderWithFluidsynth(
   await new Promise<void>((resolve, reject) => {
     const proc = spawn("fluidsynth", [
       "-ni",
-      soundfontPath,
-      midiPath,
       "-F",
       outputWavPath,
       "-r",
       "44100",
+      soundfontPath,
+      midiPath,
     ]);
 
     let stderr = "";
